@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>潇湘棋士 · liujh168</title>
+<meta name="description" content="潇湘棋士 (liujh168) 的个人主页 —— 中国象棋引擎 / UCCI 协议 / AI Agent 开发者">
+<style>
+  :root {
+    --bg: #12100e;
+    --bg-soft: #1c1915;
+    --panel: #23201a;
+    --line: #3a352b;
+    --text: #ece5d8;
+    --muted: #a89e8c;
+    --red: #c0392b;
+    --red-bright: #e74c3c;
+    --gold: #d4a94e;
+    --gold-soft: #b8935a;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+  a { color: inherit; text-decoration: none; }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 24px; }
+
+  /* ===== 顶部导航 ===== */
+  nav {
+    position: sticky; top: 0; z-index: 50;
+    backdrop-filter: blur(10px);
+    background: rgba(18, 16, 14, .82);
+    border-bottom: 1px solid var(--line);
+  }
+  nav .wrap {
+    display: flex; align-items: center; justify-content: space-between;
+    height: 60px;
+  }
+  .logo {
+    font-family: "STKaiti", "KaiTi", serif;
+    font-size: 20px; letter-spacing: 2px; color: var(--gold);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .logo .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--red-bright); }
+  nav .links { display: flex; gap: 26px; font-size: 14px; color: var(--muted); }
+  nav .links a:hover { color: var(--gold); }
+
+  /* ===== Hero ===== */
+  .hero {
+    position: relative;
+    padding: 110px 0 90px;
+    text-align: center;
+    background:
+      radial-gradient(ellipse 60% 50% at 50% 0%, rgba(192, 57, 43, .14), transparent 70%),
+      var(--bg);
+    overflow: hidden;
+  }
+  .pieces {
+    position: absolute; inset: 0; pointer-events: none;
+    font-family: "STKaiti", "KaiTi", serif;
+    color: rgba(212, 169, 78, .07);
+    font-size: 90px; white-space: nowrap;
+    user-select: none;
+  }
+  .pieces span { position: absolute; animation: float 9s ease-in-out infinite; }
+  .pieces span:nth-child(1) { left: 6%;  top: 18%; }
+  .pieces span:nth-child(2) { right: 8%; top: 12%; animation-delay: -2s; }
+  .pieces span:nth-child(3) { left: 14%; bottom: 6%; animation-delay: -4s; }
+  .pieces span:nth-child(4) { right: 15%; bottom: 14%; animation-delay: -6s; }
+  .pieces span:nth-child(5) { left: 44%; top: 62%; animation-delay: -3s; font-size: 64px; }
+  @keyframes float {
+    0%, 100% { transform: translateY(0) rotate(-2deg); }
+    50% { transform: translateY(-16px) rotate(2deg); }
+  }
+  .avatar {
+    width: 110px; height: 110px; border-radius: 50%;
+    border: 3px solid var(--gold-soft);
+    box-shadow: 0 0 0 6px rgba(212, 169, 78, .08), 0 12px 40px rgba(0,0,0,.5);
+  }
+  .hero h1 {
+    font-family: "STKaiti", "KaiTi", serif;
+    font-size: clamp(34px, 6vw, 52px);
+    letter-spacing: 6px; margin-top: 22px;
+  }
+  .hero h1 em { font-style: normal; color: var(--gold); }
+  .hero .sub {
+    color: var(--muted); margin-top: 10px; font-size: 16px; letter-spacing: 1px;
+  }
+  .hero .sub b { color: var(--red-bright); font-weight: 600; }
+  .badges { margin-top: 26px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .badge {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 8px 18px; border-radius: 999px;
+    border: 1px solid var(--line); background: var(--bg-soft);
+    font-size: 14px; color: var(--muted);
+    transition: .25s;
+  }
+  .badge:hover { border-color: var(--gold-soft); color: var(--gold); transform: translateY(-2px); }
+  .badge svg { width: 16px; height: 16px; fill: currentColor; }
+
+  /* ===== 通用区块 ===== */
+  section { padding: 76px 0; }
+  section:nth-of-type(even) { background: var(--bg-soft); }
+  .sec-title {
+    font-family: "STKaiti", "KaiTi", serif;
+    font-size: 30px; letter-spacing: 4px; text-align: center;
+  }
+  .sec-title::after {
+    content: ""; display: block; width: 46px; height: 3px;
+    background: linear-gradient(90deg, var(--red-bright), var(--gold));
+    margin: 14px auto 0; border-radius: 2px;
+  }
+  .sec-desc { text-align: center; color: var(--muted); margin-top: 12px; font-size: 15px; }
+
+  /* ===== 项目卡片 ===== */
+  .grid {
+    margin-top: 44px;
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;
+  }
+  .card {
+    display: flex; flex-direction: column;
+    background: var(--panel); border: 1px solid var(--line);
+    border-radius: 12px; padding: 22px;
+    transition: .25s;
+  }
+  .card:hover {
+    transform: translateY(-4px);
+    border-color: var(--gold-soft);
+    box-shadow: 0 14px 34px rgba(0,0,0,.4);
+  }
+  .card .top { display: flex; align-items: center; justify-content: space-between; }
+  .card h3 { font-size: 17px; color: var(--gold); font-weight: 600; }
+  .card h3::before { content: "📦 "; font-size: 15px; }
+  .card .stars { font-size: 13px; color: var(--muted); white-space: nowrap; }
+  .card p { margin-top: 10px; font-size: 14px; color: var(--muted); flex: 1; }
+  .card .meta {
+    margin-top: 16px; display: flex; align-items: center; gap: 8px;
+    font-size: 13px; color: var(--muted);
+  }
+  .lang-dot { width: 11px; height: 11px; border-radius: 50%; display: inline-block; }
+  .card .go {
+    margin-top: 14px; font-size: 13px; color: var(--red-bright);
+    opacity: 0; transform: translateX(-6px); transition: .25s;
+  }
+  .card:hover .go { opacity: 1; transform: translateX(0); }
+
+  /* ===== 技术栈 ===== */
+  .tags { margin-top: 40px; display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+  .tag {
+    padding: 9px 20px; border-radius: 8px;
+    border: 1px solid var(--line); background: var(--panel);
+    font-size: 14px; color: var(--text);
+    transition: .2s;
+  }
+  .tag:hover { border-color: var(--red-bright); color: var(--gold); }
+
+  /* ===== 统计 ===== */
+  .stats { margin-top: 44px; display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
+  .stats img {
+    border-radius: 10px; border: 1px solid var(--line);
+    background: var(--panel);
+  }
+
+  /* ===== 页脚 ===== */
+  footer {
+    border-top: 1px solid var(--line);
+    padding: 40px 0 46px; text-align: center;
+    color: var(--muted); font-size: 14px;
+  }
+  footer .heart { color: var(--red-bright); }
+  footer a { color: var(--gold); }
+  footer a:hover { text-decoration: underline; }
+
+  @media (max-width: 640px) {
+    nav .links { display: none; }
+    .pieces span { font-size: 56px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <div class="logo"><span class="dot"></span>潇湘棋士</div>
+    <div class="links">
+      <a href="#projects">精选项目</a>
+      <a href="#stack">技术栈</a>
+      <a href="#stats">GitHub 统计</a>
+      <a href="https://github.com/liujh168" target="_blank" rel="noopener">GitHub ↗</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="pieces" aria-hidden="true">
+    <span>帥</span><span>將</span><span>馬</span><span>炮</span><span>車</span>
+  </div>
+  <div class="wrap">
+    <img class="avatar" src="https://avatars.githubusercontent.com/u/25662896?v=4" alt="liujh168 的头像">
+    <h1>潇湘棋士 <em>·</em> liujh168</h1>
+    <p class="sub"><b>C++ UCCI</b> · 中国象棋引擎开发者 · AI Agent 探索者</p>
+    <div class="badges">
+      <a class="badge" href="https://github.com/liujh168" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+        @liujh168
+      </a>
+      <a class="badge" href="https://liujh168.github.io/ai-agent/" target="_blank" rel="noopener">🎓 AI Agent 课件中心</a>
+      <a class="badge" href="#projects">♞ 象棋引擎系列</a>
+    </div>
+  </div>
+</header>
+
+<section id="projects">
+  <div class="wrap">
+    <h2 class="sec-title">精选项目</h2>
+    <p class="sec-desc">从 109 个公开仓库中挑选的代表作 —— 象棋引擎为骨，AI 探索为翼</p>
+    <div class="grid">
+
+      <a class="card" href="https://github.com/liujh168/jqxq" target="_blank" rel="noopener">
+        <div class="top"><h3>jqxq</h3><span class="stars">⭐ 2</span></div>
+        <p>中国象棋 UCI/UCCI 引擎 —— 我的核心作品，符合 UCCI 协议规范的象棋引擎实现。</p>
+        <div class="meta"><span class="lang-dot" style="background:#f34b7d"></span>C++</div>
+        <span class="go">查看仓库 →</span>
+      </a>
+
+      <a class="card" href="https://github.com/liujh168/Pieces" target="_blank" rel="noopener">
+        <div class="top"><h3>Pieces</h3><span class="stars">⭐ 10</span></div>
+        <p>制作类 Cifar10 中国象棋棋子图像数据集，用于棋盘识别等计算机视觉任务。</p>
+        <div class="meta"><span class="lang-dot" style="background:#3572A5"></span>Python</div>
+        <span class="go">查看仓库 →</span>
+      </a>
+
+      <a class="card" href="https://github.com/liujh168/cch" target="_blank" rel="noopener">
+        <div class="top"><h3>cch</h3><span class="stars">⭐ 10</span></div>
+        <p>基于 Java 的中国象棋单机游戏：打谱、装载棋谱、人机对战，可用于自主学习与毕设参考。</p>
+        <div class="meta"><span class="lang-dot" style="background:#b07219"></span>Java</div>
+        <span class="go">查看仓库 →</span>
+      </a>
+
+      <a class="card" href="https://github.com/liujh168/jqmq" target="_blank" rel="noopener">
+        <div class="top"><h3>jqmq</h3><span class="stars">⭐ 5</span></div>
+        <p>橘趣盲棋 —— 中国象棋盲棋训练软件，系统设计与实现。</p>
+        <div class="meta"><span class="lang-dot" style="background:#b07219"></span>Java</div>
+        <span class="go">查看仓库 →</span>
+      </a>
+
+      <a class="card" href="https://github.com/liujh168/openbook" target="_blank" rel="noopener">
+        <div class="top"><h3>openbook</h3><span class="stars">⭐ 4</span></div>
+        <p>中国象棋开局库 —— 引擎对弈的开局知识库。</p>
+        <div class="meta"><span class="lang-dot" style="background:#f34b7d"></span>C++</div>
+        <span class="go">查看仓库 →</span>
+      </a>
+
+      <a class="card" href="https://github.com/liujh168/code-agent-demo" target="_blank" rel="noopener">
+        <div class="top"><h3>code-agent-demo</h3><span class="stars">⭐ 0</span></div>
+        <p>极简 AI Agent 框架：自然语言驱动的代码生成、沙盒执行与错误自修复循环，可接任意 OpenAI 兼容 LLM。</p>
+        <div class="meta"><span class="lang-dot" style="background:#3572A5"></span>Python</div>
+        <span class="go">查看仓库 →</span>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<section id="stack">
+  <div class="wrap">
+    <h2 class="sec-title">技术栈</h2>
+    <p class="sec-desc">十年编程路，从 DOS 汇编到 AI Agent</p>
+    <div class="tags">
+      <span class="tag">C++</span><span class="tag">Python</span><span class="tag">Java</span>
+      <span class="tag">JavaScript / TypeScript</span><span class="tag">Vue 3</span>
+      <span class="tag">Vite</span><span class="tag">PyTorch</span><span class="tag">TensorFlow</span>
+      <span class="tag">UCCI 协议</span><span class="tag">算法博弈</span><span class="tag">计算机视觉</span>
+      <span class="tag">AI Agent</span><span class="tag">LLM 应用</span>
+    </div>
+  </div>
+</section>
+
+<section id="stats">
+  <div class="wrap">
+    <h2 class="sec-title">GitHub 统计</h2>
+    <p class="sec-desc">数据来自 GitHub 公开 API，实时更新</p>
+    <div class="stats">
+      <img src="https://github-readme-stats.vercel.app/api?username=liujh168&show_icons=true&theme=dark&hide_border=true&bg_color=23201a&title_color=d4a94e&icon_color=e74c3c&text_color=ece5d8" alt="GitHub 统计" onerror="this.parentNode.removeChild(this)">
+      <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=liujh168&layout=compact&theme=dark&hide_border=true&bg_color=23201a&title_color=d4a94e&text_color=ece5d8" alt="常用语言" onerror="this.parentNode.removeChild(this)">
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>© 2026 潇湘棋士 · 以 <span class="heart">♞</span> 会友，落子无悔</p>
+    <p style="margin-top:8px">
+      <a href="https://github.com/liujh168" target="_blank" rel="noopener">GitHub</a> ·
+      <a href="https://liujh168.github.io/ai-agent/" target="_blank" rel="noopener">AI Agent 课件中心</a>
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>
